@@ -1,17 +1,16 @@
 const express = require('express');
 const fs = require('fs');
 const bodyParser = require('body-parser');
+
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
-app.use(express.static('public')); // Ukladá HTML a frontendové súbory do zložky "public"
+app.use(express.static('public')); // Verejný priečinok na statické súbory
 
-// Cesta k menu.json
-const menuFile = './menu.json';
-
-// Načítanie menu
+// Endpoint na načítanie menu
 app.get('/menu', (req, res) => {
-    fs.readFile(menuFile, 'utf8', (err, data) => {
+    fs.readFile('menu.json', 'utf8', (err, data) => {
         if (err) {
             res.status(500).send({ error: 'Nemôžem načítať menu.' });
         } else {
@@ -20,19 +19,18 @@ app.get('/menu', (req, res) => {
     });
 });
 
-// Uloženie menu
+// Endpoint na uloženie menu
 app.post('/menu', (req, res) => {
-    fs.writeFile(menuFile, JSON.stringify(req.body, null, 2), (err) => {
+    fs.writeFile('menu.json', JSON.stringify(req.body, null, 2), (err) => {
         if (err) {
             res.status(500).send({ error: 'Nemôžem uložiť menu.' });
         } else {
-            res.send({ message: 'Menu uložené.' });
+            res.send({ message: 'Menu bolo úspešne uložené.' });
         }
     });
 });
 
 // Spustenie servera
-const PORT = 3000;
 app.listen(PORT, () => {
-    console.log(`Server beží na http://localhost:${PORT}`);
+    console.log(`Server beží na porte ${PORT}`);
 });
