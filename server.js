@@ -8,6 +8,9 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(bodyParser.json());
+app.use(express.static('public')); // Ukladá HTML a frontendové súbory do zložky "public"
+// Cesta k menu.json
+const menuFile = './menu.json';
 
 // Endpoint na načítanie menu
 app.get('/menu', (req, res) => {
