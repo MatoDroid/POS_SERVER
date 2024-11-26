@@ -1,16 +1,18 @@
 const express = require('express');
 const fs = require('fs');
-const bodyParser = require('body-parser');
 const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(express.static('public')); // Ukladá HTML a frontendové súbory do zložky "public"
-// Cesta k menu.json
-const menuFile = './menu.json';
+
+// Kontrola a inicializácia súboru menu.json
+if (!fs.existsSync('menu.json')) {
+    fs.writeFileSync('menu.json', JSON.stringify([]));
+}
 
 // Endpoint na načítanie menu
 app.get('/menu', (req, res) => {
@@ -39,6 +41,12 @@ app.post('/menu', (req, res) => {
 // Endpoint na admin stránku
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+// Globálne spracovanie chýb
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send({ error: 'Niečo sa pokazilo!' });
 });
 
 // Spustenie servera
